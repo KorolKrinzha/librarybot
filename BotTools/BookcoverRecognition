@@ -1,3 +1,5 @@
+import cv2
+
 def zoomIn(img, param):
     height, width = img.shape
     y = width // param
