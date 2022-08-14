@@ -1,1 +1,37 @@
+import cv2
+
+def zoomIn(img, param):
+    height, width = img.shape
+    y = width // param
+    x = height // param
+    h = width - 2 * width // param
+    w = height - 2 * height // param
+    img = img[x:x + w, y:y + h]
+    return img
+
+
+def tellTheDifference(imgName1, imgName2):
+    img1 = cv2.imread(imgName1, 0) 
+    img2 = cv2.imread(imgName2, 0)
+    img1 = zoomIn(img1, 10)
+    img2 = zoomIn(img2, 10)
+
+    sift = cv2.xfeatures2d.SIFT_create()
+
+    kp1, des1 = sift.detectAndCompute(img1, None)
+    kp2, des2 = sift.detectAndCompute(img2, None)
+
+    bf = cv2.BFMatcher()
+    matches = bf.knnMatch(des1, des2, k=2)
+
+    good = []
+    for m, n in matches:
+        if m.distance < 0.75 * n.distance:
+            good.append([m])
+
+    # imgNew = cv2.drawMatchesKnn(img1, kp1, img2, kp2, good, None, flags=2)
+    if len(good) >= 150:
+        return True
+    else:
+        return False
 
