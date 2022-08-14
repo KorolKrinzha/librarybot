@@ -43,12 +43,11 @@ def DB_JSON(statement,values):
     data = []
     for result in rv[::-1]:
         data.append(dict(zip(row_headers, result)))
-    json_data = json.dumps(data, default=str)
 
     mydb.close()
     mycursor.close()
 
-    return json_data
+    return data
 
 
 def DB_FETCH_ONE(statement,values):
