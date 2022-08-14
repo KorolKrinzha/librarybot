@@ -1,7 +1,7 @@
 from pyzbar.pyzbar import decode
 from PIL import Image
 
-def photo(bot, message):                    #в переменной bot хранится информация о токене чат-бота
+def photo(bot, message):                    #в переменной bot хранится информация о токене чат-бота, message - аргумент функции в основном файле
     fileID = message.photo[-1].file_id
     file_info = bot.get_file(fileID)
     downloaded_file = bot.download_file(file_info.file_path)
