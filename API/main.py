@@ -25,8 +25,12 @@ def admin_role(f):
     return wrap
 
 
+@app.route("/api", methods=['GET'])
+def api():
+    return "Hello from API"
 
-@app.route("/api/adduser",ethods=['POST'])
+
+@app.route("/api/adduser",methods=['POST'])
 def api_adduser():
     add_user(user_id,lastname,firstname,username)
     
