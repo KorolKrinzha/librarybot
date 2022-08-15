@@ -41,13 +41,13 @@ def add_event_text(quiz_data):
 def show_quiz(quiz_id):
     quiz_type = check_quiz_type(quiz_id)
     show_quiz_type = {
-    'quiz_qr':show_quiz_qr(quiz_id),
-    'quiz_choose': show_quiz_multiple(quiz_id),
-    'quiz_text': show_quiz_text(quiz_id)
+    'quiz_qr':show_quiz_qr,
+    'quiz_choose': show_quiz_choose,
+    'quiz_text': show_quiz_text
 
     }
     
-    return show_quiz_type[quiz_type]
+    return show_quiz_type[quiz_type](quiz_id)
 
 # ОПРЕДЕЛИТЬ ТИП КВИЗА - КАЖДЫЙ ХРАНИТСЯ В ОТДЕЛЬНОЙ БД
 def check_quiz_type(quiz_id):
@@ -74,7 +74,7 @@ def show_quiz_text(quiz_id):
         'question': quiz_data[0]['question'],
         'right_answer_reply': quiz_data[0]['right_answer_reply'],
         'wrong_answer_reply': quiz_data[0]['wrong_answer_reply'],
-        'correct_ansers': [quiz_data_item['correct_text'] for quiz_data_item in quiz_data]
+        'right_answers': [quiz_data_item['correct_text'] for quiz_data_item in quiz_data]
         
     }
     if quiz_data[0]['prize']!=None: quiz_data_text['prize'] = quiz_data[0]['prize']
@@ -84,15 +84,52 @@ def show_quiz_text(quiz_id):
     return quiz_data_text
 
 def show_quiz_qr(quiz_id):
-    quiz_data = {
-        'quiz_id':1,
-        'quiz_type': 'qr',
-    }
-    return quiz_data
+    quiz_data = DB_JSON(
+        """ 
+        SELECT hse_quiz.question, hse_quiz.prize, hse_quiz.right_answer_reply, hse_quiz.wrong_answer_reply, quiz_qr.* 
+        FROM  hse_quiz  JOIN quiz_qr ON quiz_qr.quiz_id = hse_quiz.quiz_id WHERE quiz_qr.quiz_id = %(quiz_id)s;
 
-def show_quiz_one(quiz_id):
+        """,{'quiz_id':quiz_id})
     
-    return
+    quiz_data_qr = {
+        'quiz_id': quiz_data[0]['quiz_id'],
+        'question': quiz_data[0]['question'],
+        'right_answer_reply': quiz_data[0]['right_answer_reply'],
+        'wrong_answer_reply': quiz_data[0]['wrong_answer_reply'],
+        'qr_text': quiz_data[0]['qr_text'],
 
-def show_quiz_multiple(quiz_id):
-    return
+        
+    }
+    if quiz_data[0]['prize']!=None: quiz_data_qr['prize'] = quiz_data[0]['prize']
+    
+    quiz_data_qr = json.dumps(quiz_data_qr,ensure_ascii=False)
+
+    
+    return quiz_data_qr
+
+def show_quiz_choose(quiz_id):
+    quiz_data = DB_JSON(
+        """ 
+        SELECT hse_quiz.question, hse_quiz.prize, hse_quiz.right_answer_reply, hse_quiz.wrong_answer_reply, quiz_choose.* 
+        FROM  hse_quiz  JOIN quiz_choose ON quiz_choose.quiz_id = hse_quiz.quiz_id WHERE quiz_choose.quiz_id = %(quiz_id)s;
+        """, 
+        {'quiz_id':quiz_id}
+        )
+    
+    quiz_data_choose = {
+        'quiz_id': quiz_data[0]['quiz_id'],
+        'question': quiz_data[0]['question'],
+        'right_answer_reply': quiz_data[0]['right_answer_reply'],
+        'wrong_answer_reply': quiz_data[0]['wrong_answer_reply'],
+        'right_answers': [quiz_data_item['option_text'] for quiz_data_item in quiz_data if  quiz_data_item['option_correct']],
+        'wrong_answers': [quiz_data_item['option_text'] for quiz_data_item in quiz_data if  not quiz_data_item['option_correct']]
+
+        
+    }
+    if quiz_data[0]['prize']!=None: quiz_data_choose['prize'] = quiz_data[0]['prize']
+    
+    quiz_data_choose = json.dumps(quiz_data_choose,ensure_ascii=False)
+
+    
+    return quiz_data_choose
+

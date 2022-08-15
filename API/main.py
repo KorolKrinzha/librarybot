@@ -39,16 +39,14 @@ def api_adduser():
 
 @app.route("/api/quiz/<quiz_id>")
 def api_quiz(quiz_id):
-    try:
-        quiz_data = show_quiz(quiz_id)
-        Response(
-            response=quiz_data,
-            status=200,
-            mimetype='application/json')
     
-        return quiz_data
-    except Exception as error:
-        Response(response=str(error), status=500)
+    quiz_data = show_quiz(quiz_id)
+    Response(
+        response=quiz_data,
+        status=200,
+        mimetype='application/json')
+
+    return quiz_data
 
 # АДМИНКА
 @app.route("/api/admin/createquiz", methods=['POST'])
