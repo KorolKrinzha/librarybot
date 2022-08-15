@@ -27,12 +27,12 @@ const Header = () => {
                 </li>
                 <li>
                 <NavLink to="/create" className="nav-link text-success">
-                    Контакты
+                    Создать новые квизы
                 </NavLink>
                 </li>
                 <li>
                 <NavLink to="/users" className="nav-link text-success">
-                    Спиоск пользователей
+                    Список пользователей
                 </NavLink>
                 </li>
                 <li>

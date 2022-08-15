@@ -52,7 +52,9 @@ def api_quiz(quiz_id):
 @app.route("/api/admin/createquiz", methods=['POST'])
 @admin_role
 def api_admin_createquiz():
-    return
+    post_data = request.data
+    print(post_data)
+    return post_data
 
 @app.route("/api/admin/deletequiz", methods=['POST'])
 @admin_role

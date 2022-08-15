@@ -1,8 +1,12 @@
 import React from 'react'
+import CreateQuizText from '../components/CreateQuizText'
 
 const CreateQuiz = () => {
   return (
-    <div>Hello world</div>
+    <div>
+        <CreateQuizText/>
+    </div>
+    
   )
 }
 
