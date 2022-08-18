@@ -4,9 +4,15 @@ import time
 import json
 import csv
 from werkzeug.security import generate_password_hash, check_password_hash
+from uuid import uuid4
 
 
-    
+def create_id():
+    random_name = str(uuid4())
+    random_name = random_name.replace("-","")
+    random_name = "001_"+random_name
+    return random_name
+
 
 def DB_COMMIT(statement,values):
     mydb = mysql.connector.connect(
@@ -26,6 +32,27 @@ def DB_COMMIT(statement,values):
 
     
     return
+
+def DB_COMMIT_MULTIPLE(statement,values):
+    mydb = mysql.connector.connect(
+    host=env.MYSQL_HOST,
+    port=3306,
+    user= env.MYSQL_USER,
+    password = env.MYSQL_PASSWORD,
+    database=env.MYSQL_DB    
+)
+    mycursor = mydb.cursor(buffered=True)
+
+    mycursor.executemany(statement,values)
+    mydb.commit()
+    
+    mydb.close()
+    mycursor.close()
+
+    
+    return
+
+
 
 def DB_JSON(statement,values):
     mydb = mysql.connector.connect(

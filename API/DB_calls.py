@@ -1,5 +1,5 @@
 import json
-from DB_tools import DB_JSON, DB_COMMIT, DB_FETCH_ONE, DB_CHECK_EXISTENCE
+from DB_tools import DB_JSON, DB_COMMIT, DB_FETCH_ONE, DB_CHECK_EXISTENCE, DB_COMMIT_MULTIPLE, create_id
 
 
 
@@ -11,27 +11,60 @@ def add_user(user_id, lastname, firstname, username):
 
 
 # СОЗДАНИЕ ИВЕНТА
-def add_event(event_type, quiz_data):
+def add_quiz(quiz_type, quiz_data):
     create_quiz_type = {
-        'one': 1,
-        'multiple': 1,
-        'qr':1,
-        'text': 1
-        
+    'quiz_qr':add_quiz_qr,
+    'quiz_choose': add_quiz_choose,
+    'quiz_text': add_quiz_text
     }
+    
+    create_quiz_type[quiz_type](quiz_data=quiz_data)
     
     return
 
-def add_event_one(quiz_data):
+
+
+def add_quiz_choose(quiz_data):
+    quiz_id = create_id()
+    DB_COMMIT(""" 
+              INSERT INTO hse_quiz (quiz_id,quiz_type, question, right_answer_reply, wrong_answer_reply) 
+              VALUES (%(quiz_id)s, %(quiz_type)s, %(question)s, %(right_answer_reply)s, %(wrong_answer_reply)s);
+              """, {'quiz_id':quiz_id,
+                    'quiz_type': 'quiz_text',
+                    'question':quiz_data['question'],
+                    'right_answer_reply': quiz_data['right_answer_reply'],
+                    'wrong_answer_reply': quiz_data['wrong_answer_reply']})
+    
+    choose_insert_values = [(quiz_id, correct_text)  for correct_text in quiz_data['correct_text'] ]
+
+
     return
 
-def add_event_multiple(quiz_data):
+
+def add_quiz_qr(quiz_data):
     return
 
-def add_event_qr(quiz_data):
-    return
+def add_quiz_text(quiz_data):
+    quiz_id = create_id()
+    DB_COMMIT(""" 
+              INSERT INTO hse_quiz (quiz_id,quiz_type, question, right_answer_reply, wrong_answer_reply) 
+              VALUES (%(quiz_id)s, %(quiz_type)s, %(question)s, %(right_answer_reply)s, %(wrong_answer_reply)s);
+              """, {'quiz_id':quiz_id,
+                    'quiz_type': 'quiz_text',
+                    'question':quiz_data['question'],
+                    'right_answer_reply': quiz_data['right_answer_reply'],
+                    'wrong_answer_reply': quiz_data['wrong_answer_reply']})
+    
+    text_insert_values = [(quiz_id, correct_text)  for correct_text in quiz_data['correct_text'] ]
+    
 
-def add_event_text(quiz_data):
+    
+    DB_COMMIT_MULTIPLE("""
+              INSERT INTO quiz_text (quiz_id, correct_text)  VALUES
+              (%s,%s)""", text_insert_values)
+    
+        
+            
     return
 
 
@@ -62,7 +95,7 @@ def check_quiz_type(quiz_id):
 def show_quiz_text(quiz_id):
     quiz_data = DB_JSON(
         """
-        SELECT hse_quiz.question, hse_quiz.prize, hse_quiz.right_answer_reply, hse_quiz.wrong_answer_reply, `quiz_text`.* 
+        SELECT hse_quiz.question, hse_quiz.prize, hse_quiz.right_answer_reply, hse_quiz.wrong_answer_reply, quiz_text.* 
         FROM  hse_quiz  JOIN quiz_text ON quiz_text.quiz_id = hse_quiz.quiz_id WHERE 
         quiz_text.quiz_id = %(quiz_id)s; 
         """, {'quiz_id':quiz_id})

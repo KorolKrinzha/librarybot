@@ -5,7 +5,7 @@ import mysql.connector
 import env
 import json
 
-from DB_calls import check_admin, add_user, check_quiz_type, show_quiz
+from DB_calls import check_admin, add_user, check_quiz_type, show_quiz, add_quiz
 
 
 
@@ -50,11 +50,17 @@ def api_quiz(quiz_id):
 
 # АДМИНКА
 @app.route("/api/admin/createquiz", methods=['POST'])
-@admin_role
+# @admin_role
 def api_admin_createquiz():
     post_data = request.data
-    print(post_data)
-    return post_data
+    data_json = json.loads(post_data.decode('utf-8'))
+    quiz_type = data_json['quiz_type']
+    print(quiz_type)
+    
+    try:
+        add_quiz(quiz_type, data_json)
+    except Exception as error: print(error, "!!!!")
+    return ''
 
 @app.route("/api/admin/deletequiz", methods=['POST'])
 @admin_role

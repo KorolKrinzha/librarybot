@@ -3,34 +3,13 @@ import { useState } from 'react';
 import axios from 'axios';
 import AddInput from './AddInput';
 
-const CreateQuizText = () => {
-
-    const sendQuizText = () =>
-    {
-        axios.post('/api/admin/createquiz',{
-            quiz_type: 'quiz_text',
-            question: question,
-            right_answer_reply: rightAnswerReply,
-            wrong_answer_reply: wrongAnswerReply,
-            correct_text: correctText
-
-        }).then((response)=>{
-            console.log(response)
-        })
-        
-    }
-
-    const [correctText,setCorrectText]=useState([]);
-    const [question, setQuestion] = useState('')
-    const [rightAnswerReply, setRightAnswerReply] = useState('Отлично! Правильный ответ.')
-    const [wrongAnswerReply, setWrongAnswerReply] = useState('Попробуй еще раз')
-
-
+const TemplateQuiz = ({question, setQuestion, rightAnswerReply,setRightAnswerReply, 
+    wrongAnswerReply, setWrongAnswerReply, sendQuiz, ...props }) => {
 
 
  return(
      <>
-     <form onSubmit={sendQuizText}>
+     <form onSubmit={sendQuiz}>
      <div className="formSection bg-grey">
 
 
@@ -59,9 +38,7 @@ const CreateQuizText = () => {
 
 
 
-    <label>Правильные ответы</label>
-    <AddInput  correctText={correctText} setCorrectText={setCorrectText}/>
-
+        {props.children}
 
         <button type="submit" className="form-button"> СОЗДАТЬ ЗАДАНИЕ</button>
         </div>
@@ -71,4 +48,4 @@ const CreateQuizText = () => {
  );
  }
 
-export default CreateQuizText
+export default TemplateQuiz
