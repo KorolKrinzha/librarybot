@@ -9,13 +9,15 @@ const CreateQuizChoice = () => {
 
     const sendQuizChoice = () =>
     {
+        const correctList = correct.map(function(item){return item===''})
+        console.log(correctList)
         axios.post('/api/admin/createquiz',{
             quiz_type: 'quiz_choose',
             question: question,
             right_answer_reply: rightAnswerReply,
             wrong_answer_reply: wrongAnswerReply,
             option_text: text,
-            option_correct: correct
+            option_correct: correctList
 
         }).then((response)=>{
             console.log(response)

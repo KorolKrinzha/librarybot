@@ -55,7 +55,6 @@ def api_admin_createquiz():
     post_data = request.data
     data_json = json.loads(post_data.decode('utf-8'))
     quiz_type = data_json['quiz_type']
-    print(quiz_type)
     
     try:
         add_quiz(quiz_type, data_json)

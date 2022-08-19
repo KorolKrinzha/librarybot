@@ -30,12 +30,18 @@ def add_quiz_choose(quiz_data):
               INSERT INTO hse_quiz (quiz_id,quiz_type, question, right_answer_reply, wrong_answer_reply) 
               VALUES (%(quiz_id)s, %(quiz_type)s, %(question)s, %(right_answer_reply)s, %(wrong_answer_reply)s);
               """, {'quiz_id':quiz_id,
-                    'quiz_type': 'quiz_text',
+                    'quiz_type': 'quiz_choose',
                     'question':quiz_data['question'],
                     'right_answer_reply': quiz_data['right_answer_reply'],
                     'wrong_answer_reply': quiz_data['wrong_answer_reply']})
     
-    choose_insert_values = [(quiz_id, correct_text)  for correct_text in quiz_data['correct_text'] ]
+    choose_insert_values = [(quiz_id, quiz_data['option_text'][i], quiz_data['option_correct'][i])  for i in range(len(quiz_data['option_text'])) ]
+
+    DB_COMMIT_MULTIPLE("""
+              INSERT INTO quiz_choose (quiz_id, option_text, option_correct)  VALUES
+              (%s,%s, %s)""", choose_insert_values)
+    print(choose_insert_values)
+    
 
 
     return
