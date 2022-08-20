@@ -191,14 +191,24 @@ LEFT JOIN quiz_text on hse_quiz.quiz_id = quiz_text.quiz_id left JOIN quiz_qr on
 
 def show_all_preview(quiz_type, pagenumber):
     quizes_preview = {}
+    pagenumber = int(pagenumber)
+    quizes_per_page = 10
+    offset = (10*(pagenumber-1))-(pagenumber-1)
+    limit = pagenumber*quizes_per_page
+    print(limit)
+    print(pagenumber)
+    print(offset)
     if quiz_type=="all" and len(quiz_type)>0:
         quizes_preview = DB_JSON("""
-                                SELECT quiz_id, quiz_type, question FROM hse_quiz;
-                                """, {})
+                                SELECT quiz_id, quiz_type, question FROM hse_quiz LIMIT %(limit)s OFFSET %(offset)s;
+                                """, {'limit': limit,
+                                      'offset': offset})
     else:
         quizes_preview = DB_JSON(""" 
-                                 SELECT quiz_id, quiz_type, question FROM hse_quiz WHERE quiz_type=%(quiz_type)s;
-                                 """, {'quiz_type':quiz_type})
+                                 SELECT quiz_id, quiz_type, question FROM hse_quiz WHERE quiz_type=%(quiz_type)s LIMIT %(limit)s OFFSET %(offset)s;
+                                 """, {'quiz_type':quiz_type,
+                                       'limit': limit,
+                                       'offset': offset})
         
     
     quizes_count = DB_FETCH_ONE("""

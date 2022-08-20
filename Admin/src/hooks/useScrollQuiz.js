@@ -32,8 +32,8 @@ const useScrollQuiz = (pageNumber, quizType) => {
         setQuizes((prevQuizes) => {
           return [...new Set([...prevQuizes, ...quizes.map((b) => b.quiz_id)])];
         });
-        // setHasMore(response.data.length > 0);
-        // setLoading(false);
+        setHasMore(quizes.length > 0);
+        setLoading(false);
       })
       .catch((e) => setError(e));
   }, [pageNumber, quizType]);

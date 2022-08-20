@@ -26,6 +26,7 @@ const ShowQuizes = () => {
                 // если последний объект доходит до конца страницы, мы добавляем еще страницу
                 // тем самым pageNumber изменяется, вызывая useEffect с запросом от axios
                 setPageNumber(prevPageNumber => prevPageNumber+1)
+                console.log('visible')
             }
         })
         if (node) observer.current.observe(node)
@@ -58,7 +59,7 @@ const ShowQuizes = () => {
         return <div key={quiz} className='display-1'>{quiz}</div>
         }
     })}
-    <div>{loading ? "Loading..." : null}</div>
+    <div>{loading ? "Загрзука..." : null}</div>
     <div> {error ? "Error!":null}</div>
     </>
 
