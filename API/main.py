@@ -1,15 +1,16 @@
 import time 
 from functools import wraps
-from flask import Flask, request, send_from_directory, abort, Response
+from flask import Flask, request, send_from_directory, abort, Response, jsonify
 import mysql.connector
 import env
 import json
 
-from DB_calls import check_admin, add_user, check_quiz_type, show_quiz, add_quiz
+from DB_calls import check_admin, add_user, check_quiz_type, show_quiz, add_quiz, show_all, show_all_preview
 
 
 
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
 
 
 def admin_role(f):
@@ -66,6 +67,26 @@ def api_admin_createquiz():
 def api_admin_deletequiz(quiz_id):
     return
 
+@app.route("/api/admin/showall", methods=['GET'])
+def api_admin_showall():
+    
+    json_data = json.dumps(show_all(),  ensure_ascii=False)   
+       
+    return jsonify(quizes=json_data)
+
+@app.route("/api/admin/showpreview", methods=['GET'])
+def api_admin_showpreview():
+    quiz_type = request.args.get('quiz_type')
+    page_number = request.args.get('page')
+    print(quiz_type,page_number)
+    
+    quizes_data = show_all_preview(quiz_type=quiz_type,pagenumber=page_number)
+    
+    json_data = json.dumps(quizes_data['quizes'], ensure_ascii=False)
+    
+    
+    
+    return jsonify(quizes=json_data, count=quizes_data['count'])
 
 if __name__ == 'main':
     app.run(debug=True, host='0.0.0.0')

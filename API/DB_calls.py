@@ -1,5 +1,5 @@
 import json
-from DB_tools import DB_JSON, DB_COMMIT, DB_FETCH_ONE, DB_CHECK_EXISTENCE, DB_COMMIT_MULTIPLE, create_id
+from DB_tools import DB_JSON, DB_JSON_NONULL, DB_COMMIT, DB_FETCH_ONE, DB_CHECK_EXISTENCE, DB_COMMIT_MULTIPLE, create_id
 
 
 
@@ -172,3 +172,37 @@ def show_quiz_choose(quiz_id):
     
     return quiz_data_choose
 
+def show_all():
+     
+    quizes = DB_JSON(""" 
+SELECT hse_quiz.quiz_id, 
+hse_quiz.quiz_type, 
+hse_quiz.right_answer_reply, 
+hse_quiz.wrong_answer_reply, 
+hse_quiz.prize,
+quiz_choose.option_text, 
+quiz_choose.option_correct, 
+quiz_text.correct_text, 
+quiz_qr.qr_text 
+FROM hse_quiz LEFT JOIN quiz_choose on hse_quiz.quiz_id=quiz_choose.quiz_id 
+LEFT JOIN quiz_text on hse_quiz.quiz_id = quiz_text.quiz_id left JOIN quiz_qr on hse_quiz.quiz_id=quiz_qr.quiz_id;
+                   """, {})
+    return quizes
+
+def show_all_preview(quiz_type, pagenumber):
+    quizes_preview = {}
+    if quiz_type=="all" and len(quiz_type)>0:
+        quizes_preview = DB_JSON("""
+                                SELECT quiz_id, quiz_type, question FROM hse_quiz;
+                                """, {})
+    else:
+        quizes_preview = DB_JSON(""" 
+                                 SELECT quiz_id, quiz_type, question FROM hse_quiz WHERE quiz_type=%(quiz_type)s;
+                                 """, {'quiz_type':quiz_type})
+        
+    
+    quizes_count = DB_FETCH_ONE("""
+                                SELECT COUNT(*) FROM hse_quiz;
+                                """, {})
+    
+    return {'quizes':quizes_preview, 'count':quizes_count[0]}

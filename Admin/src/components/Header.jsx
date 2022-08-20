@@ -31,6 +31,11 @@ const Header = () => {
                 </NavLink>
                 </li>
                 <li>
+                <NavLink to="/show" className="nav-link text-success">
+                    Просмотреть квизы
+                </NavLink>
+                </li>
+                <li>
                 <NavLink to="/users" className="nav-link text-success">
                     Список пользователей
                 </NavLink>
