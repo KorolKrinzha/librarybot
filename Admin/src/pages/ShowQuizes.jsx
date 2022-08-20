@@ -2,6 +2,7 @@ import React from 'react'
 import { useCallback } from 'react'
 import { useRef } from 'react'
 import { useState } from 'react'
+import ShowSingleQuiz from '../components/QuizPopup'
 import useScrollQuiz from '../hooks/useScrollQuiz'
 import "../styles/style.css"
 
@@ -13,7 +14,8 @@ const ShowQuizes = () => {
         quizes,
         hasMore,
         loading,
-        error
+        error,
+        quizesInfo
     } = useScrollQuiz(pageNumber, quizType)
 
 
@@ -54,10 +56,20 @@ const ShowQuizes = () => {
 
     {quizes.map((quiz,index)=>{
         if (quizes.length === index+1){
-        return <div key={quiz} ref={lastQuizElement} className='display-1'>{quiz}</div>
+        return (<>       
+        <ShowSingleQuiz key={quiz} quiz_id={quiz} quiz_type={quizesInfo[index][0]} question={quizesInfo[index][1]}/>
+        <div ref={lastQuizElement} key={`${quiz}_ref`}></div>
+        </>
+
+        )
+
         }else{
-        return <div key={quiz} className='display-1'>{quiz}</div>
+        return (
+         <ShowSingleQuiz key={quiz} quiz_id={quiz} quiz_type={quizesInfo[index][0]} question={quizesInfo[index][1]}/>
+        )
         }
+        
+    
     })}
     <div>{loading ? "Загрзука..." : null}</div>
     <div> {error ? "Error!":null}</div>

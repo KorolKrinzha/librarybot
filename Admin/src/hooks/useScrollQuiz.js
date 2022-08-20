@@ -6,6 +6,7 @@ const useScrollQuiz = (pageNumber, quizType) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [quizes, setQuizes] = useState([]);
+  const [quizesInfo, setQuizesInfo] = useState([]);
   const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
@@ -27,18 +28,28 @@ const useScrollQuiz = (pageNumber, quizType) => {
       })
       .then((response) => {
         console.log(response);
-        const quizes = JSON.parse(response.data.quizes);
-        console.log(quizes);
+        const list_quizes = JSON.parse(response.data.quizes);
         setQuizes((prevQuizes) => {
-          return [...new Set([...prevQuizes, ...quizes.map((b) => b.quiz_id)])];
+          return [
+            ...new Set([...prevQuizes, ...list_quizes.map((b) => b.quiz_id)]),
+          ];
         });
-        setHasMore(quizes.length > 0);
+
+        setQuizesInfo((prevInfo) => {
+          return [
+            ...new Set([
+              ...prevInfo,
+              ...list_quizes.map((b) => [b.quiz_type, b.question]),
+            ]),
+          ];
+        });
+        setHasMore(list_quizes.length > 0);
         setLoading(false);
       })
       .catch((e) => setError(e));
   }, [pageNumber, quizType]);
 
-  return { loading, error, quizes, hasMore };
+  return { loading, error, quizes, quizesInfo, hasMore };
 };
 
 export default useScrollQuiz;

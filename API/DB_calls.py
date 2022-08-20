@@ -1,5 +1,6 @@
 import json
-from DB_tools import DB_JSON, DB_JSON_NONULL, DB_COMMIT, DB_FETCH_ONE, DB_CHECK_EXISTENCE, DB_COMMIT_MULTIPLE, create_id
+from DB_tools import DB_JSON, DB_COMMIT, DB_FETCH_ONE, DB_CHECK_EXISTENCE, DB_COMMIT_MULTIPLE, create_id
+
 
 
 
@@ -77,7 +78,17 @@ def add_quiz_text(quiz_data):
 
 
 # ПОКАЗ ИВЕНОВ
-def show_quiz(quiz_id):
+def show_quiz_with_type(quiz_id, quiz_type):
+    show_quiz_type = {
+    'quiz_qr':show_quiz_qr,
+    'quiz_choose': show_quiz_choose,
+    'quiz_text': show_quiz_text
+
+    }
+    
+    return show_quiz_type[quiz_type](quiz_id)
+
+def show_quiz_no_type(quiz_id):
     quiz_type = check_quiz_type(quiz_id)
     show_quiz_type = {
     'quiz_qr':show_quiz_qr,
@@ -87,6 +98,8 @@ def show_quiz(quiz_id):
     }
     
     return show_quiz_type[quiz_type](quiz_id)
+
+    
 
 # ОПРЕДЕЛИТЬ ТИП КВИЗА - КАЖДЫЙ ХРАНИТСЯ В ОТДЕЛЬНОЙ БД
 def check_quiz_type(quiz_id):
@@ -216,3 +229,5 @@ def show_all_preview(quiz_type, pagenumber):
                                 """, {})
     
     return {'quizes':quizes_preview, 'count':quizes_count[0]}
+
+    
