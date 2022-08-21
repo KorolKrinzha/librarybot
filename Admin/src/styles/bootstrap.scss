@@ -1,12 +1,11 @@
 // ЦВЕТА
-$primary: #FF9A6F; // цвет основного текста
-$secondary: #FFC75B;
+$primary: #003087; // цвет основного текста
+$secondary: #0047bb;
 $success: #F8F3F0; // 
-$danger: #A63543; // красный акцентный
-$warning: #F4A255; 
-$bg-dark: #191919; // цвет темной темы
-$info: $secondary;
-$bg-grey: #282828;
+$danger: #9D9D9C; // красный акцентный
+$warning: #b5e2ff; 
+$info: #45b6fe;
+$bg-white: #ededed;
 
 
 // ---ШРИФТЫ---
@@ -43,8 +42,8 @@ body,
 }
 
 body{
-    background-color: $bg-dark;
-    background: $bg-dark;
+    background-color: $bg-white;
+    background: $bg-white;
 }
 
 h1{
@@ -108,12 +107,12 @@ li,ul{
     list-style-type: none;
 }
 
-.bg-grey{
-    background-color: $bg-grey !important;
+.bg-white{
+    background-color: $bg-white !important;
 }
 
-.bg-dark{
-    background-color: $bg-dark !important;
+.bg-white{
+    background-color: $bg-white !important;
 }
 
 // ---ГЛАВНАЯ СТРАНИЦА---
@@ -266,7 +265,7 @@ li,ul{
 // ДЛЯ ОКОШЕК В РЕГИСТРАЦИИ. НАПРИМЕР, МЭЙЛ
 .formSection{
     @extend .mb-4;    
-    background-color: $bg-dark;
+    background-color: $bg-white;
     color: $success;
 
     
@@ -313,7 +312,7 @@ li,ul{
         color: $success !important;
         @extend .form-input-border;
         option{
-            background-color: $bg-dark;
+            background-color: $bg-white;
         }        
     }
 
@@ -400,12 +399,12 @@ li,ul{
     @extend .justify-content-center;   
     
     th{
-        border-bottom:1px solid $bg-dark !important;
+        border-bottom:1px solid $bg-white !important;
         color: $secondary;
         @extend .h2;
         @extend .text-center;
         @extend .mt-4;   
-        background-color: $bg-grey !important;       
+        background-color: $bg-white !important;       
     }
 
     td{
@@ -494,7 +493,7 @@ li,ul{
         @extend .navbar-dark;
         @extend .navbar-expand-lg;
         @extend .navbar-light;
-        background-color: $bg-grey !important;
+        background-color: $bg-white !important;
         color: $success
         
     }
@@ -669,13 +668,13 @@ li,ul{
     border: transparent !important;
     @extend .list-group-item;
     @extend .mt-5;
-    background-color: $bg-dark !important;
+    background-color: $bg-white !important;
 }
 
 .eventlist-singleItem {
     @extend .d-flex;
     @extend .flex-column;
-    background-color: $bg-dark !important;
+    background-color: $bg-white !important;
 
     p{
         font-family: PrimaryHeading;

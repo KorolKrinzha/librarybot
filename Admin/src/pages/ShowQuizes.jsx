@@ -40,7 +40,6 @@ const ShowQuizes = () => {
     const handleType = (e) =>{
         setQuizType(e.target.value)
         setPageNumber(1)
-        console.log(e.target.value)
     }
 
 

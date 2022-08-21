@@ -14,7 +14,9 @@ const ShowSingleQuiz = ({quiz_id, quiz_type, question}) => {
         setSingleQuizPopupOpen(!singleQuizPopupOpen)
         
     }
-    }>{question}</div>
+    }>
+        {question}
+    </div>
         {singleQuizPopupOpen && <Popup title={`Просмотр квиза`} setModalOpen={setSingleQuizPopupOpen}>
             <SingleQuiz quiz_type={quiz_type} quiz_id={quiz_id}/> </Popup>}
     </>

@@ -8,7 +8,11 @@ const SingleQuiz = ({quiz_id, quiz_type}) => {
 
     const [rightAnswerReply, setRightAnswerReply] = useState('')
     const [wrongAnswerReply, setWrongAnswerReply] = useState('')
-    const [specificInfo, setSpecificInfo] = useState([])
+    const [textInfo, setTextInfo] = useState([])
+    const [rightAnswersForChoose, setRightAnswersForChoose] = useState([])
+    const [wrongAnswersForChoose, setWrongAnswersForChoose] = useState([])
+    const [qrText, setQrText] = useState('')
+
 
 
     useEffect(()=>{
@@ -25,20 +29,27 @@ const SingleQuiz = ({quiz_id, quiz_type}) => {
             setWrongAnswerReply(response.data.wrong_answer_reply)
             switch(quiz_type){
                 case 'quiz_choose': 
-                    console.log(response.data)
+                    console.log(quiz_type)
+                    setRightAnswersForChoose(response.data.right_answers)
+                    setWrongAnswersForChoose(response.data.wrong_answers)
                     break
                 case 'quiz_text':
-                    console.log(response.data)
+                    console.log(quiz_type)
+                    setTextInfo(response.data.right_answers)
                     break
                 case 'quiz_qr':
-                    console.log(response.data)
+                    setQrText(response.data.qr_text)
+
 
                     break
                 default:
-                    setSpecificInfo(['Ошибка в получении данных.'])
+                    
             }
         })
     },[])
+
+
+    
 
 
   return ( <>     
@@ -48,6 +59,58 @@ const SingleQuiz = ({quiz_id, quiz_type}) => {
     <label>Сообщение при неверном ответе</label>
     <p>{wrongAnswerReply}</p>
 
+    {(
+        ()=>{
+            switch(quiz_type){
+                case 'quiz_choose': 
+                return(<>
+                <label>Правильные ответы</label>
+                {rightAnswersForChoose.map((info, index)=>{
+                    return (
+                        <p key={index}>{info}</p>
+                    )
+                })}
+
+                
+                <label>Неверные ответы</label>
+                {wrongAnswersForChoose.map((info, index)=>{
+                    return (
+                        <p key={index}>{info}</p>
+                    )
+                })}
+
+
+                </>)
+                
+                
+            case 'quiz_text':
+                return(<>
+                {console.log('switch activated')}
+                <label>Правильные текстовые ответы</label>
+                {textInfo.map((info, index)=>{
+                    return (
+                        <p key={index}>{info}</p>
+                    )
+                })}
+    
+                </>)
+                
+            case 'quiz_qr':
+                return (<>
+                    <label>Текст QR-кода: </label>
+                    <p>{qrText}</p>
+                    </>)
+    
+            
+            default:
+                return (<>
+                <p>Ошибка в получении данных</p></>)
+    
+            }
+        }
+    )()}
+
+    
     </>
 
   )
