@@ -1,8 +1,8 @@
 // ЦВЕТА
-$primary: #003087; // цвет основного текста
-$secondary: #0047bb;
+$primary: #0F2D69; // цвет основного текста
+$secondary: #0033AB;
 $success: #F8F3F0; // 
-$danger: #9D9D9C; // красный акцентный
+$danger: #000000; // красный акцентный
 $warning: #b5e2ff; 
 $info: #45b6fe;
 $bg-white: #ededed;
@@ -184,7 +184,7 @@ li,ul{
     
 
     font-family: PrimaryHeading;
-    color: $success;
+    color: $primary;
 }
 
 .text-subtitle{
@@ -243,30 +243,27 @@ li,ul{
     @extend .h3;
 
     font-family: PrimaryText;
-    color: $success !important;
-    text-decoration: none;
-    border: transparent !important;
-    @extend .background-gradient-red;
+    @extend  .btn-success;
+    @extend  .text-danger;
+
     
 
 }
 
 
 .form-input-border{
-    @extend .border-gradient;
-    @extend .border-gradient-red;
+    border: 15px solid !important;
+    border-image-slice: 1 !important;
+    border-width: 3px !important;
+    border-color: $danger !important;
 
 }
 
-.background-gradient-red{
-    background-image: linear-gradient(to left, $danger, $primary) !important;
-}
 
 // ДЛЯ ОКОШЕК В РЕГИСТРАЦИИ. НАПРИМЕР, МЭЙЛ
 .formSection{
     @extend .mb-4;    
-    background-color: $bg-white;
-    color: $success;
+    color: $secondary;
 
     
     label{        
@@ -275,6 +272,7 @@ li,ul{
         @extend .text-center;
         @extend .h4;
         font-family: PrimaryTextBold;
+        
 
     }
 
@@ -285,21 +283,21 @@ li,ul{
         @extend .align-middle;
         height: 50px; 
         line-height: 50px;
-        color: $success !important;
+        color: $secondary !important;
         background-color: transparent;    
 
     }
 
     input:not([type=checkbox]):focus{
         border: yellow;
-        color: $success !important;
+        color: $secondary !important;
         background-color: transparent;    
     }
 
     textarea{
         @extend .form-input-border;
         background-color: transparent !important;
-        color: $success !important;        
+        color: $secondary !important;        
     }
 
     input, textarea:disabled{
@@ -309,7 +307,7 @@ li,ul{
 
     select{               
         background-color: transparent !important;
-        color: $success !important;
+        color: $secondary !important;
         @extend .form-input-border;
         option{
             background-color: $bg-white;
@@ -329,7 +327,7 @@ li,ul{
         width:35px;
         height:35px;
         line-height: 30px;
-        color: $success;
+        color: $secondary;
         @extend .align-middle;
         @extend .justify-content-center;
         @extend .form-input-border;
@@ -349,11 +347,10 @@ li,ul{
 .form-select{
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 0, 0, 0.6);
     background-color: transparent;
-    color: $success;
+    color: $secondary;
 }
 
 .form-control{
-    border-image-source: linear-gradient(to left, $danger, $primary) !important;
     // box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 38, 255, 0.6);
 }
 // КОНТЕЙНЕР ДЛЯ ПРЕДЛОЖЕНИЯ ЛОГИНА
@@ -366,17 +363,16 @@ li,ul{
     
 }
 
-.exportButton{
+.quizTypeButton{
     @extend .btn;
     @extend  .btn-success;
-    @extend  .text-warning;
+    @extend  .text-danger;
 
     @extend .m-3;
     @extend .text-center;
     @extend .h4;
     
-    @extend .d-flex;   
-    @extend .justify-content-center;
+
 
 }
 
@@ -453,7 +449,7 @@ li,ul{
 
 
 // ---ИВЕНТЫ---
-.EVENTS-textContainer{
+.quizS-textContainer{
     @extend .row;
     @extend .justify-content-center;
     @extend .mt-4;
@@ -462,7 +458,7 @@ li,ul{
     
 }
 
-.EVENTS-textTitle{
+.quizS-textTitle{
     @extend .h2;
     @extend .text-center;
     @extend .mt-5;
@@ -470,7 +466,7 @@ li,ul{
     font-family: PrimaryHeading
 }
 
-.EVENTS-textDescription{
+.quizS-textDescription{
     @extend .lead;
     @extend .text-center;
     @extend .mt-3;
@@ -478,7 +474,7 @@ li,ul{
 }
 
 
-.score-noevents{
+.score-noquizs{
     @extend .text-center;
 }
 
@@ -493,7 +489,7 @@ li,ul{
         @extend .navbar-dark;
         @extend .navbar-expand-lg;
         @extend .navbar-light;
-        background-color: $bg-white !important;
+        background-color: $primary !important;
         color: $success
         
     }
@@ -501,7 +497,6 @@ li,ul{
         font-family: PrimaryHeading;
         @extend .h3;
         @extend .align-middle;
-        @extend .ps-3;
         color: $success !important;
         text-decoration: none;
 
@@ -515,7 +510,10 @@ li,ul{
     }
     li{
         @extend .nav-item;
+        @extend .align-middle;
         @extend .active;
+        @extend .ps-3;
+
         
         
     }
@@ -535,152 +533,46 @@ li,ul{
 
 
 
-// УВЕДОМЛЕНИЯ
-@font-face {
-  font-family: 'Notification';
-  src: url(./fonts/HSESans-Regular.otf);
-  font-weight: normal;
-  font-style: normal;
-}
 
-.notification-container {
-  box-sizing: border-box;
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 999999;
-  width: 320px;
-  padding: 0px 15px;
-  max-height: calc(100% - 30px);
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.notification {
-  box-sizing: border-box;
-  padding: 15px 15px 15px 58px;
-  border-radius: 2px;
-  color: #fff;
-  background-color: #ccc;
-  box-shadow: 0 0 12px #999;
-  cursor: pointer;
-  font-size: 1em;
-  line-height: 1.2em;
-  position: relative;
-  opacity: 0.9;
-  margin-top: 15px;
-}
-
-.notification .title {
-  font-size: 1em;
-  line-height: 1.2em;
-  font-weight: bold;
-  margin: 0 0 5px 0;
-}
-
-.notification:hover, .notification:focus {
-  opacity: 1;
-}
-
-.notification-enter {
-  visibility: hidden;
-  transform: translate3d(100%, 0, 0);
-}
-
-.notification-enter.notification-enter-active {
-  visibility: visible;
-  transform: translate3d(0, 0, 0);
-  transition: all 0.4s;
-}
-
-.notification-leave {
-  visibility: visible;
-  transform: translate3d(0, 0, 0);
-}
-
-.notification-leave.notification-leave-active {
-  visibility: hidden;
-  transform: translate3d(100%, 0, 0);
-  transition: all 0.4s;
-}
-
-.notification:before {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  margin-top: -14px;
-  display: block;
-  font-family: 'Notification';
-  width: 28px;
-  height: 28px;
-  font-size: 28px;
-  text-align: center;
-  line-height: 28px;
-}
-
-.notification-info {
-  background-color: #2f96b4;
-}
-
-.notification-info:before {
-  content: "";
-}
-
-.notification-success {
-  background-color: #51a351;
-}
-
-.notification-success:before {
-  content: "";
-}
-
-.notification-warning {
-  background-color: $secondary;
-}
-
-.notification-warning:before {
-  content: "";
-}
-
-.notification-error {
-  background-color: #bd362f;
-}
-
-.notification-error:before {
-  content: "";
-}
 
 // ГРАДИЕНТЫ
   
-  .border-gradient {
-    border: 15px solid !important;
-    border-image-slice: 1 !important;
-    border-width: 3px !important;
-  }
-  .border-gradient-red {
-    border-image-source: linear-gradient(to left, $danger, $primary) !important;
-  }
 
 
 // СПИСОК ИВЕНТОВ
 
-.eventlist-li{
+.quizlist-li{
     border: transparent !important;
     @extend .list-group-item;
     @extend .mt-5;
-    background-color: $bg-white !important;
 }
 
-.eventlist-singleItem {
+.quizlist-singleItem {
     @extend .d-flex;
     @extend .flex-column;
-    background-color: $bg-white !important;
 
     p{
+        @extend .ps-3;
         font-family: PrimaryHeading;
-        color: $primary;
+        color: $secondary;
         @extend .h2;
     }
+}
+
+.quiz-view{
+    label{
+        @extend .h5;
+        color: $info;
+    }
+}
+
+.quiz-view-active{
+    color: $secondary !important;
+
+}
+
+quiz-view-inactive{
+    color: $info !important;
 }
 
 // !!! НЕ УДАЛЯТЬ ИМПОРТ

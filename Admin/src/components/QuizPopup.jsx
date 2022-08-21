@@ -10,12 +10,15 @@ const ShowSingleQuiz = ({quiz_id, quiz_type, question}) => {
 
 
   return ( <>
-    <div onClick={()=>{
+    <div className='quizlist-singleItem'
+    onClick={()=>{
         setSingleQuizPopupOpen(!singleQuizPopupOpen)
         
     }
     }>
-        {question}
+        {singleQuizPopupOpen ? <p className='quiz-view-active'>{question}</p> : <p className='quiz-view-inactive'>{question}</p>}
+
+       
     </div>
         {singleQuizPopupOpen && <Popup title={`Просмотр квиза`} setModalOpen={setSingleQuizPopupOpen}>
             <SingleQuiz quiz_type={quiz_type} quiz_id={quiz_id}/> </Popup>}

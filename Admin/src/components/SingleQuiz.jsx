@@ -52,7 +52,7 @@ const SingleQuiz = ({quiz_id, quiz_type}) => {
     
 
 
-  return ( <>     
+  return ( <div className='quiz-view'>     
    <label>Сообщение при правильном ответе</label>
     <p>{rightAnswerReply}</p>
 
@@ -97,7 +97,7 @@ const SingleQuiz = ({quiz_id, quiz_type}) => {
                 
             case 'quiz_qr':
                 return (<>
-                    <label>Текст QR-кода: </label>
+                    <label>Текст QR-кода</label>
                     <p>{qrText}</p>
                     </>)
     
@@ -111,7 +111,7 @@ const SingleQuiz = ({quiz_id, quiz_type}) => {
     )()}
 
     
-    </>
+    </div>
 
   )
 }

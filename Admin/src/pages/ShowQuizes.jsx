@@ -47,24 +47,29 @@ const ShowQuizes = () => {
 
   return (
       <>
-    <button onClick={handleType} value="all">Все</button>
-    <button onClick={handleType} value="quiz_choose">Выбор правильного ответа</button>
-    <button onClick={handleType} value="quiz_text">Ответ текстом</button>
-    <button onClick={handleType} value="quiz_qr">Скан QR</button>
+    <button onClick={handleType} value="all" className='quizTypeButton'>Все</button>
+    <button onClick={handleType} value="quiz_choose" className='quizTypeButton'>Выбор правильного ответа</button>
+    <button onClick={handleType} value="quiz_text" className='quizTypeButton'>Ответ текстом</button>
+    <button onClick={handleType} value="quiz_qr" className='quizTypeButton'>Скан QR</button>
 
 
     {quizes.map((quiz,index)=>{
         if (quizes.length === index+1){
         return (<>       
+        <div className='quizlist-singleItem'>
         <ShowSingleQuiz key={quiz} quiz_id={quiz} quiz_type={quizesInfo[index][0]} question={quizesInfo[index][1]}/>
         <div ref={lastQuizElement} key={`${quiz}_ref`}></div>
+
+        </div>
         </>
 
         )
 
         }else{
         return (
+            <div className='quizlist-li'>
          <ShowSingleQuiz key={quiz} quiz_id={quiz} quiz_type={quizesInfo[index][0]} question={quizesInfo[index][1]}/>
+         </div>
         )
         }
         
