@@ -2,6 +2,8 @@ import React from 'react'
 import { useState } from 'react'
 import axios from 'axios'
 import { useEffect } from 'react'
+import { ReactComponent as CloseButton} from '../assets/deletebutton.svg' 
+
 
 
 const SingleQuiz = ({quiz_id, quiz_type}) => {
@@ -48,11 +50,32 @@ const SingleQuiz = ({quiz_id, quiz_type}) => {
         })
     },[])
 
+    const deleteQuiz = (e)=>{
+        e.preventDefault()
+        axios.post("/api/admin/deletequiz",{
+            quiz_id:quiz_id,            
+            withCredentials:true
+        }).then((response)=>{
+            if (response.status===200) window.location.reload();
+
+        }).catch((error)=>{
+            console.log(error)
+        })
+
+    }
+
 
     
 
 
-  return ( <div className='quiz-view'>     
+  return ( <div className='quiz-view'>    
+              <button className='svg-button mt-3'
+            onClick={(e) => 
+              deleteQuiz(e)
+            }
+          >
+            <CloseButton/>
+    </button> 
    <label>Сообщение при правильном ответе</label>
     <p>{rightAnswerReply}</p>
 

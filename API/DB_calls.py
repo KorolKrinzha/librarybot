@@ -1,5 +1,5 @@
 import json
-from DB_tools import DB_JSON, DB_COMMIT, DB_FETCH_ONE, DB_CHECK_EXISTENCE, DB_COMMIT_MULTIPLE, create_id
+from DB_tools import DB_JSON, DB_COMMIT, DB_FETCH_ONE, DB_CHECK_EXISTENCE, DB_COMMIT_MULTIPLE, create_id, create_QR_code
 
 
 
@@ -41,7 +41,6 @@ def add_quiz_choose(quiz_data):
     DB_COMMIT_MULTIPLE("""
               INSERT INTO quiz_choose (quiz_id, option_text, option_correct)  VALUES
               (%s,%s, %s)""", choose_insert_values)
-    print(choose_insert_values)
     
 
 
@@ -49,6 +48,25 @@ def add_quiz_choose(quiz_data):
 
 
 def add_quiz_qr(quiz_data):
+    quiz_id = create_id()
+    DB_COMMIT(""" 
+              """, {})
+    
+    create_QR_code(quiz_id, quiz_data['qr_text'])
+    DB_COMMIT(""" 
+              INSERT INTO hse_quiz (quiz_id,quiz_type, question, right_answer_reply, wrong_answer_reply) 
+              VALUES (%(quiz_id)s, %(quiz_type)s, %(question)s, %(right_answer_reply)s, %(wrong_answer_reply)s);
+              """, {'quiz_id':quiz_id,
+                    'quiz_type': 'quiz_text',
+                    'question':quiz_data['question'],
+                    'right_answer_reply': quiz_data['right_answer_reply'],
+                    'wrong_answer_reply': quiz_data['wrong_answer_reply']})
+
+    DB_COMMIT("""
+              INSERT INTO quiz_qr (quiz_id,qr_text) VALUES (%(quiz_id)s,%(qr_text)s)
+              """, {'quiz_id':quiz_id,
+                        'qr_text': quiz_data['qr_text']})
+    
     return
 
 def add_quiz_text(quiz_data):
@@ -75,6 +93,12 @@ def add_quiz_text(quiz_data):
     return
 
 
+def delete_quiz(quiz_id):
+    print(quiz_id)
+    DB_COMMIT(""" 
+              DELETE FROM hse_quiz WHERE quiz_id=%(quiz_id)s
+              """, {'quiz_id':quiz_id})
+    return
 
 
 # ПОКАЗ ИВЕНОВ
@@ -208,9 +232,6 @@ def show_all_preview(quiz_type, pagenumber):
     quizes_per_page = 10
     offset = (10*(pagenumber-1))-(pagenumber-1)
     limit = pagenumber*quizes_per_page
-    print(limit)
-    print(pagenumber)
-    print(offset)
     if quiz_type=="all" and len(quiz_type)>0:
         quizes_preview = DB_JSON("""
                                 SELECT quiz_id, quiz_type, question FROM hse_quiz LIMIT %(limit)s OFFSET %(offset)s;

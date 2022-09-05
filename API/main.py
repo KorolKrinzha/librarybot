@@ -5,7 +5,7 @@ import mysql.connector
 import env
 import json
 
-from DB_calls import check_admin, add_user, check_quiz_type,  add_quiz, show_all, show_all_preview, show_quiz_with_type, show_quiz_no_type
+from DB_calls import check_admin, add_user, check_quiz_type,  add_quiz, show_all, show_all_preview, show_quiz_with_type, show_quiz_no_type, delete_quiz
 
 
 
@@ -80,9 +80,18 @@ def api_admin_quiz_with_type():
 
 # !!! УДАЛЕНИЕ КВИЗА - АДМИН КЛИЕНТ
 @app.route("/api/admin/deletequiz", methods=['POST'])
-@admin_role
-def api_admin_deletequiz(quiz_id):
-    return
+def api_admin_deletequiz():
+
+    post_data = request.data
+    data_json = json.loads(post_data.decode('utf-8'))
+    quiz_id = data_json['quiz_id']
+    print(quiz_id, "11111")
+
+    try:
+        delete_quiz(quiz_id)
+        return Response(status=200)
+    except Exception as e:
+        return Response(response=str(e),status=500)
 
 # !!! ПОКАЗ ВСЕХ ИВЕНТОВ - АДМИН КИЕНТ
 @app.route("/api/admin/showall", methods=['GET'])
@@ -97,7 +106,6 @@ def api_admin_showall():
 def api_admin_showpreview():
     quiz_type = request.args.get('quiz_type')
     page_number = request.args.get('page')
-    print(quiz_type,page_number)
     
     quizes_data = show_all_preview(quiz_type=quiz_type,pagenumber=page_number)
     

@@ -6,6 +6,7 @@ import csv
 from werkzeug.security import generate_password_hash, check_password_hash
 from uuid import uuid4
 from psycopg2 import sql as sqlhelper
+import qrcode
 
 
 def create_id():
@@ -160,6 +161,22 @@ def DB_CHECK_EXISTENCE(statement,values):
 
 
 def create_QR_code(quiz_id,qr_text):
+    qr = qrcode.QRCode(
+        border = 1,
+        box_size=20       
+    )
+    
+    
+    qr_text = str(qr_text)
+    
+    qr.add_data(qr_text)
+    qr.make(fit=True)
+    qr_image = qr.make_image(fill_color="black", back_color="white")
+    qr_image.save(f'./api_public/QR/{quiz_id}.png')
+    event_info = {"ID": quiz_id, "Path": event_path } #решить, нужно ли это
+    add_text_to_QR(title, f'{quiz_id}.png', dynamic)
+    
+
     
     
     return 
