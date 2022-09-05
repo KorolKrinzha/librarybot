@@ -20,12 +20,6 @@ const Header = () => {
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
               <ul>
                 <li>
-                <NavLink to="/logs" className="nav-link text-success">
-                    Мой аккаунт
-                </NavLink>
-    
-                </li>
-                <li>
                 <NavLink to="/create" className="nav-link text-success">
                     Создать новые квизы
                 </NavLink>

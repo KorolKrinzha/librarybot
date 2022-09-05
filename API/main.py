@@ -25,19 +25,21 @@ def admin_role(f):
             return abort(403)
     return wrap
 
-
+# ПРОВЕРКА API
 @app.route("/api", methods=['GET'])
 def api():
     return "Hello from API"
 
+# ТЕЛЕГРАМ КЛИЕНТ
 
+# ДОБАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯ - ТЕЛЕГРАМ КЛИЕНТ
 @app.route("/api/adduser",methods=['POST'])
 def api_adduser():
     add_user(user_id,lastname,firstname,username)
     
     return
 
-
+# ПОКАЗ ИВЕНТА - ТЕЛЕГРАМ КЛИЕНТ
 @app.route("/api/quiz/<quiz_id>")
 def api_quiz(quiz_id):
     
@@ -49,7 +51,9 @@ def api_quiz(quiz_id):
 
     return quiz_data
 
-# АДМИНКА
+# АДМИН КЛИЕНТ
+
+# ДОБАВЛЕНИЕ ИВЕНТА ЛЮБОГО УСТАНОВЛЕННОГО ТИПА - АДМИН КЛИЕНТ
 @app.route("/api/admin/createquiz", methods=['POST'])
 # @admin_role
 def api_admin_createquiz():
@@ -59,8 +63,9 @@ def api_admin_createquiz():
     
     try:
         add_quiz(quiz_type, data_json)
-    except Exception as error: print(error, "!!!!")
+    except Exception as error: print(error)
     return ''
+
 
 @app.route("/api/admin/quiz_with_type", methods=['GET'])
 def api_admin_quiz_with_type():
@@ -73,12 +78,13 @@ def api_admin_quiz_with_type():
                     status=200,
                     mimetype='application/json')
 
-
+# !!! УДАЛЕНИЕ КВИЗА - АДМИН КЛИЕНТ
 @app.route("/api/admin/deletequiz", methods=['POST'])
 @admin_role
 def api_admin_deletequiz(quiz_id):
     return
 
+# !!! ПОКАЗ ВСЕХ ИВЕНТОВ - АДМИН КИЕНТ
 @app.route("/api/admin/showall", methods=['GET'])
 def api_admin_showall():
     
@@ -86,6 +92,7 @@ def api_admin_showall():
        
     return jsonify(quizes=json_data)
 
+# ПРЕДПОКАЗ ВСЕХ ИВЕНТОВ С ИСПОЛЬЗОВАНИЕМ ПАГИНАЦИИ - АДМИН КЛИЕНТ  
 @app.route("/api/admin/showpreview", methods=['GET'])
 def api_admin_showpreview():
     quiz_type = request.args.get('quiz_type')

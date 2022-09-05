@@ -159,3 +159,8 @@ def DB_CHECK_EXISTENCE(statement,values):
     return bool(existence_value)
 
 
+def create_QR_code(quiz_id,qr_text):
+    
+    
+    return 
+
