@@ -1,8 +1,0 @@
-{
-    "quiz_id": "001_93c8a389b8f54e85837fcefef26065f6",
-    "question": "Здесь вопрос",
-    "right_answer_reply": "Отлично! Правильный ответ.",
-    "wrong_answer_reply": "Попробуй еще раз",
-    "right_answers": ["аааа"],
-    "wrong_answers": ["а"]
-}
