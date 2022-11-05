@@ -4,10 +4,9 @@ from flask import Flask, request, send_from_directory, abort, Response, jsonify
 import mysql.connector
 import env
 import json
-# from DB_calls import check_admin, add_user, check_quiz_type,  add_quiz, show_all, show_all_preview, show_quiz_with_type, show_quiz_no_type, delete_quiz
-from DB_calls import add_user, show_quiz_no_type, check_answer, show_userscore
-from DB_calls import add_quiz
-from DB_calls import delete_quiz
+from DB_calls import add_user, show_quiz, check_answer, show_userscore
+from DB_calls import add_quiz, delete_quiz
+from DB_calls import show_all_users
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -33,8 +32,6 @@ def api():
 # ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ
 
 # Добавление пользователя
-
-
 @app.route("/api/adduser", methods=['POST'])
 def api_adduser():
 
@@ -60,17 +57,18 @@ def api_adduser():
 @app.route("/api/quiz", methods=['GET'])
 def api_quiz():
     quiz_id = request.args.get(key='quiz_id')
-    quiz_data = show_quiz_no_type(quiz_id)
-    Response(
-        response=quiz_data,
+    try:
+        return Response(
+        response=show_quiz(quiz_id),
         status=200,
         mimetype='application/json')
-
-    return quiz_data
+    except Exception as e:
+        print(e)
+        return Response(response='Ошибка при получении квиза', status=500)
+        
+    
 
 # Проверка ответа на квиз пользователя
-
-
 @app.route("/api/answer", methods=['POST'])
 def api_answer():
     quiz_id = request.args.get(key='quiz_id')
@@ -104,8 +102,18 @@ def api_userscore():
 # Вывод всех пользователей
 @app.route("/api/admin/showusers", methods=['GET'])
 def api_showusers():
-    users = show_all_users()
-    return users
+    try:
+        all_users = show_all_users()
+        all_users = json.dumps(all_users)
+        return Response(response=all_users,
+                 status=200,
+                 mimetype='application/json')
+    except Exception as e:
+        print(e)
+        return Response(response='Ошибка при получении пользователей', status=500)
+    
+    
+    
 
 
 # Добавление квиза

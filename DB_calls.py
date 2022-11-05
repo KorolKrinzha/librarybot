@@ -89,8 +89,6 @@ def add_quiz_qr(quiz_data):
 
 def add_quiz_text(quiz_data):
     quiz_id = create_id()
-    print(quiz_data['question'])
-    print(quiz_data['right_answer_reply'])    
     DB_COMMIT(""" 
               INSERT INTO hse_quiz (quiz_id,quiz_type, question, right_answer_reply, wrong_answer_reply, prize) 
               VALUES (%(quiz_id)s, %(quiz_type)s, %(question)s, %(right_answer_reply)s, %(wrong_answer_reply)s, %(prize)s);
@@ -118,15 +116,16 @@ def add_quiz_text(quiz_data):
 
 
 def delete_quiz(quiz_id):
-    print(quiz_id)
     DB_COMMIT(""" 
               DELETE FROM hse_quiz WHERE quiz_id=%(quiz_id)s
               """, {'quiz_id':quiz_id})
     return
 
 
-# ПОКАЗ ИВЕНОВ
-def show_quiz_with_type(quiz_id, quiz_type):
+
+def show_quiz(quiz_id, quiz_type=''):
+    if len(quiz_type)==0:
+        quiz_type = check_quiz_type(quiz_id)
     show_quiz_type = {
     'quiz_qr':show_quiz_qr,
     'quiz_choose': show_quiz_choose,
@@ -136,20 +135,9 @@ def show_quiz_with_type(quiz_id, quiz_type):
     
     return show_quiz_type[quiz_type](quiz_id)
 
-def show_quiz_no_type(quiz_id):
-    quiz_type = check_quiz_type(quiz_id)
-    show_quiz_type = {
-    'quiz_qr':show_quiz_qr,
-    'quiz_choose': show_quiz_choose,
-    'quiz_text': show_quiz_text
-
-    }
-    
-    return show_quiz_type[quiz_type](quiz_id)
-
     
 
-# ОПРЕДЕЛИТЬ ТИП КВИЗА - КАЖДЫЙ ХРАНИТСЯ В ОТДЕЛЬНОЙ БД
+# Определить тип квиза
 def check_quiz_type(quiz_id):
     quiz_type = DB_FETCH_ONE(""" 
                  SELECT hse_quiz.quiz_type FROM hse_quiz WHERE quiz_id = %(quiz_id)s;
@@ -276,3 +264,10 @@ def show_all_preview(quiz_type, pagenumber):
     return {'quizes':quizes_preview, 'count':quizes_count[0]}
 
     
+    
+def show_all_users():
+    users = DB_JSON(""" 
+                    SELECT * FROM hse_users;
+                    """, {})
+    print(users)
+    return users
