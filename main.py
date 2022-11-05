@@ -5,6 +5,7 @@ import mysql.connector
 import env
 import json
 from DB_calls import add_user, show_quiz, check_answer, show_userscore
+from DB_calls import check_admin
 from DB_calls import add_quiz, delete_quiz
 from DB_calls import show_all_users, show_all_quizes
 
@@ -12,17 +13,17 @@ app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
 
-# def admin_role(f):
-#     @wraps(f)
-#     def wrap(*args, **kwargs):
-#         try:
-#             session_token = request.cookies['session_token']
-#             if check_admin(session_token): return f(*args, **kwargs)
-#             else: return abort(403)
-#         except Exception as e:
-#             print(e)
-#             return abort(403)
-#     return wrap
+def admin_role(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        try:
+            admin_token = request.args.get(key="admin_token")
+            if check_admin(admin_token): return f(*args, **kwargs)
+            else: return abort(403)
+        except Exception as e:
+            print(e)
+            return abort(403)
+    return wrap
 
 # Проверка API
 @app.route("/api", methods=['GET'])
@@ -79,16 +80,15 @@ def api_answer():
     user_id = request.args.get(key='user_id')
     answer = request.args.get(key='answer')
     quiz_type = request.args.get(key='quiz_type')
-    print(quiz_id, user_id, answer, quiz_type)
-    # try:
-    correct, reply = check_answer(quiz_id, quiz_type, user_id, answer)
-    if correct:
-        return jsonify({"correct": correct, "reply": reply})
-    else:
-        return jsonify({"correct": correct, "reply": reply})
-    # except Exception as e:
-    #     print(e)
-    #     return Response(response='Ошибка при получении ответа', status=500)
+    try:
+        correct, reply = check_answer(quiz_id, quiz_type, user_id, answer)
+        if correct:
+            return jsonify({"correct": correct, "reply": reply})
+        else:
+            return jsonify({"correct": correct, "reply": reply})
+    except Exception as e:
+        print(e)
+        return Response(response='Ошибка при получении ответа', status=500)
 
 
 # Просмотр счета
@@ -108,25 +108,12 @@ def api_userscore():
         return Response(response='Ошибка при получении данных', status=500)
 
 
-# Вывод всех пользователей
-@app.route("/api/admin/showusers", methods=['GET'])
-def api_showusers():
-    try:
-        all_users = show_all_users()
-        all_users = json.dumps(all_users)
-        return Response(response=all_users,
-                 status=200,
-                 mimetype='application/json')
-    except Exception as e:
-        print(e)
-        return Response(response='Ошибка при получении пользователей', status=500)
-    
-    
-    
+# АДМИНИСТРАТОР
 
 
 # Добавление квиза
 @app.route("/api/admin/createquiz", methods=['POST'])
+@admin_role
 def api_admin_createquiz():
     quiz_type = request.args.get(key='quiz_type')
     question = request.args.get(key='question') 
@@ -154,19 +141,10 @@ def api_admin_createquiz():
         return Response(response='Ошибка при добавлении квиза', status=500)
 
 
-# @app.route("/api/admin/quiz_with_type", methods=['GET'])
-# def api_admin_quiz_with_type():
-#     quiz_type = request.args.get('quiz_type')
-#     quiz_id = request.args.get('quiz_id')
-#     quiz_data = show_quiz_with_type(quiz_id, quiz_type)
-
-
-#     return Response(response=quiz_data,
-#                     status=200,
-#                     mimetype='application/json')
 
 # Удаление квиза
 @app.route("/api/admin/deletequiz", methods=['POST'])
+@admin_role
 def api_admin_deletequiz():
     quiz_id = request.args.get(key='quiz_id')
     try:
@@ -178,6 +156,7 @@ def api_admin_deletequiz():
 
 # Просмотр всех квизов
 @app.route("/api/admin/showquizes", methods=['GET'])
+@admin_role
 def api_admin_showquizes():
     try:
         json_data = json.dumps(show_all_quizes(),  ensure_ascii=False)
@@ -187,7 +166,32 @@ def api_admin_showquizes():
         print(e)
         return Response(response='Ошибка при получении квизов', status=500)
         
-
+# Вывод всех пользователей
+@app.route("/api/admin/showusers", methods=['GET'])
+@admin_role
+def api_showusers():
+    try:
+        all_users = show_all_users()
+        all_users = json.dumps(all_users)
+        return Response(response=all_users,
+                 status=200,
+                 mimetype='application/json')
+    except Exception as e:
+        print(e)
+        return Response(response='Ошибка при получении пользователей', status=500)
+    
+    
+# Вывод QR-кода
+@app.route("/api/admin/showqr", methods=['GET'])
+@admin_role
+def api_showqr():
+    qr_id = request.args.get(key='qr_id')
+    try:
+        
+        return send_from_directory('./api_public/QR/', f'{qr_id}.png')
+    except Exception as e:
+        print(e)
+        return Response(response='Ошибка при получении QR-кода', status=500)
 
 if __name__ == 'main':
     app.run(debug=True, host='0.0.0.0', port=6000)

@@ -5,7 +5,11 @@ from DB_tools import DB_JSON, DB_COMMIT, DB_FETCH_ONE, DB_CHECK_EXISTENCE, DB_CO
 
 
 def check_admin(session_token):
-    return True
+    if DB_CHECK_EXISTENCE(""" 
+                          SELECT * FROM hse_users WHERE user_id=%(session_token)s AND admin=1
+                          """, {'session_token':session_token}):
+        return True
+    else: return False 
 
 def add_user(user_id, lastname='', firstname='', username=''):
     DB_COMMIT(''' 
