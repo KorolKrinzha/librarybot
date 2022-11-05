@@ -70,20 +70,28 @@ def add_quiz_choose(quiz_data):
 def add_quiz_qr(quiz_data):
     quiz_id = create_id()
     
-    create_QR_code(quiz_id, quiz_data['qr_text'])
+    
+    # в specifics указано, что будет в QR-коде
+    quiz_data['specifics'] = json.loads(quiz_data['specifics'])
+    qr_text = quiz_data['specifics']['qr_text']
+
+    # quiz_id для имени, qr_text для содержимого QR-кода
+    create_QR_code(quiz_id, qr_text)
     DB_COMMIT(""" 
-              INSERT INTO hse_quiz (quiz_id,quiz_type, question, right_answer_reply, wrong_answer_reply) 
-              VALUES (%(quiz_id)s, %(quiz_type)s, %(question)s, %(right_answer_reply)s, %(wrong_answer_reply)s);
+              INSERT INTO hse_quiz (quiz_id,quiz_type, question, right_answer_reply, wrong_answer_reply, prize) 
+              VALUES (%(quiz_id)s, %(quiz_type)s, %(question)s, %(right_answer_reply)s, %(wrong_answer_reply)s, %(prize)s);
               """, {'quiz_id':quiz_id,
-                    'quiz_type': 'quiz_text',
+                    'quiz_type': 'quiz_qr',
                     'question':quiz_data['question'],
                     'right_answer_reply': quiz_data['right_answer_reply'],
-                    'wrong_answer_reply': quiz_data['wrong_answer_reply']})
+                    'wrong_answer_reply': quiz_data['wrong_answer_reply'],
+                    'prize': quiz_data['prize']})
+
 
     DB_COMMIT("""
               INSERT INTO quiz_qr (quiz_id,qr_text) VALUES (%(quiz_id)s,%(qr_text)s)
               """, {'quiz_id':quiz_id,
-                        'qr_text': quiz_data['qr_text']})
+                        'qr_text': qr_text})
     
     return
 
