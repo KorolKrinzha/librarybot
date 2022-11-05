@@ -63,39 +63,48 @@ def api_quiz():
         status=200,
         mimetype='application/json')
     except Exception as e:
-        print(e)
-        return Response(response='Ошибка при получении квиза', status=500)
+        if type(e) == ValueError:
+            return Response(
+                response='Квиз не найден',
+                status=404)
+        else:
+            return Response(response='Ошибка при получении квиза', status=500)
         
     
 
 # Проверка ответа на квиз пользователя
-@app.route("/api/answer", methods=['POST'])
+@app.route("/api/answer", methods=['POST', 'GET'])
 def api_answer():
     quiz_id = request.args.get(key='quiz_id')
     user_id = request.args.get(key='user_id')
     answer = request.args.get(key='answer')
-
-    try:
-        correct, reply = check_answer(quiz_id, quiz_type, user_id, answer)
-        if correct:
-            return Response(response=reply, status=200)
-        else:
-            return Response(response=reply, status=200)
-    except BaseException:
-        return Response(response='Ошибка при получении ответа', status=500)
+    quiz_type = request.args.get(key='quiz_type')
+    print(quiz_id, user_id, answer, quiz_type)
+    # try:
+    correct, reply = check_answer(quiz_id, quiz_type, user_id, answer)
+    if correct:
+        return jsonify({"correct": correct, "reply": reply})
+    else:
+        return jsonify({"correct": correct, "reply": reply})
+    # except Exception as e:
+    #     print(e)
+    #     return Response(response='Ошибка при получении ответа', status=500)
 
 
 # Просмотр счета
 @app.route("/api/userscore", methods=['GET'])
 def api_userscore():
-    user_id = request.args.get(key='user_id')
+    user_id = request.args.get(key='user_id') or None
+    if user_id is None:
+        return Response(response='Не указан user_id', status=400)
     try:
         userscore = show_userscore(user_id)
-        return Response(
-            response=userscore,
-            status=200,
-            mimetype='application/json')
-    except BaseException:
+        if userscore is None:
+            return Response(response='В аккаунте нет очков', status=404)
+        userscore = userscore[0]
+        return Response(response=str(userscore['score']), status=200)
+        
+    except Exception as e:
         return Response(response='Ошибка при получении данных', status=500)
 
 

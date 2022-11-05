@@ -9,37 +9,83 @@ def check_admin(session_token):
 
 def add_user(user_id, lastname='', firstname='', username=''):
     DB_COMMIT(''' 
-              INSERT INTO hse_users VALUES (%(user_id)s, %(lastname)s, %(firstname)s, %(username)s)''',
+              INSERT INTO hse_users VALUES (%(user_id)s, %(lastname)s, %(firstname)s, %(username)s, 0 )''',
               {'user_id': user_id, 'lastname': lastname, 'firstname': firstname, 'username': username})
 
 def show_userscore(user_id):
-    # DB_JSON(''' SELECT * FROM ''', {'user_id':user_id})
+    userscore = DB_JSON(
+        ''' 
+        SELECT score FROM hse_users WHERE user_id = %(user_id)s
+        ''', {'user_id': user_id})
+    return userscore
+
+
+def add_points(user_id, points):
+    DB_COMMIT('''
+              UPDATE hse_users SET score = score + %(points)s WHERE user_id = %(user_id)s
+              ''', {'points': points, 'user_id': user_id})
     return
 
 def check_answer(quiz_id,quiz_type,user_id,answer):
+    
     check_answer_type = {
     'quiz_qr':check_answer_qr,
     'quiz_choose': check_answer_choose,
     'quiz_text': check_answer_text
 
     }
+    correct = check_answer_type[quiz_type](quiz_id,answer)
     
-    return 
+    quiz_data = DB_JSON('''
+            SELECT * FROM hse_quiz WHERE quiz_id = %(quiz_id)s''', {'quiz_id':quiz_id})
+    if correct:
+        # добавляем балл за правильный ответ
+        add_points(user_id, quiz_data[0]['prize'])
+        return True, quiz_data[0]['right_answer_reply']
+    else: 
+        return False, quiz_data[0]['right_answer_reply']
+    return correct, reply
 
 
+def check_answer_qr(quiz_id, answer):
+    correct = DB_CHECK_EXISTENCE('SELECT * FROM quiz_qr WHERE quiz_id=%(quiz_id)s AND qr_text=%(answer)s',
+                       {'quiz_id':quiz_id, 'answer':answer})
+    if correct:
+        return True
+    else:
+        return False	
 
+def check_answer_choose(quiz_id, answer):
+    correct = DB_CHECK_EXISTENCE('''
+                                 SELECT * FROM quiz_choose WHERE 
+                                 quiz_id=%(quiz_id)s AND option_text=%(answer)s AND option_correct=1''',
+                                 {'quiz_id':quiz_id, 'answer':answer})
+    if correct:
+        return True
+    else:
+        return False
+    return
+
+def check_answer_text(quiz_id, answer):
+    correct = DB_CHECK_EXISTENCE('''
+                                 SELECT * FROM quiz_text WHERE quiz_id=%(quiz_id)s AND correct_text=%(answer)s
+                                 ''',
+                                 {'quiz_id':quiz_id, 'answer':answer})
+    if correct:
+        return True
+    else:
+        return False
+    return
+    return
 
 # СОЗДАНИЕ ИВЕНТА
 def add_quiz(quiz_type, quiz_data):
-    
     create_quiz_type = {
     'quiz_qr':add_quiz_qr,
     'quiz_choose': add_quiz_choose,
     'quiz_text': add_quiz_text
     }
-    
     create_quiz_type[quiz_type](quiz_data=quiz_data)
-
     return
 
     
@@ -59,7 +105,6 @@ def add_quiz_choose(quiz_data):
                     'prize': quiz_data['prize']})
     	
 
-
     # specifics выглядит следующим образом: 
     #   {'option_text': ['прав', 'неправ', 'неправ2'], 'option_correct': [1, 0, 0]}
     choose_insert_values = []
@@ -70,28 +115,18 @@ def add_quiz_choose(quiz_data):
         option_text = str(quiz_data['specifics']['option_text'][option])
         option_correct =bool (quiz_data['specifics']['option_correct'][option])
         choose_insert_values.append((quiz_id, option_text, option_correct))
-        
-
-    
-
 
     DB_COMMIT_MULTIPLE("""
               INSERT INTO quiz_choose (quiz_id, option_text, option_correct)  VALUES
               (%s,%s, %s)""", choose_insert_values)
-    
-
-
     return
 
 
 def add_quiz_qr(quiz_data):
     quiz_id = create_id()
-    
-    
     # в specifics указано, что будет в QR-коде
     quiz_data['specifics'] = json.loads(quiz_data['specifics'])
     qr_text = quiz_data['specifics']['qr_text']
-
     # quiz_id для имени, qr_text для содержимого QR-кода
     create_QR_code(quiz_id, qr_text)
     DB_COMMIT(""" 
@@ -134,8 +169,6 @@ def add_quiz_text(quiz_data):
     DB_COMMIT_MULTIPLE("""
               INSERT INTO quiz_text (quiz_id, correct_text)  VALUES
               (%s,%s)""", text_insert_values)
-    
-        
             
     return
 
@@ -150,7 +183,11 @@ def delete_quiz(quiz_id):
 
 def show_quiz(quiz_id, quiz_type=''):
     if len(quiz_type)==0:
-        quiz_type = check_quiz_type(quiz_id)
+        try:
+            quiz_type = check_quiz_type(quiz_id)
+        except:
+            print('Такого квиза не существует')
+            raise ValueError('Такого квиза не существует')
     show_quiz_type = {
     'quiz_qr':show_quiz_qr,
     'quiz_choose': show_quiz_choose,
