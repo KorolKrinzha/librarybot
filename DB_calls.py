@@ -8,10 +8,13 @@ def check_admin(session_token):
     return True
 
 def add_user(user_id, lastname='', firstname='', username=''):
-    print(user_id, lastname, firstname, username)
     DB_COMMIT(''' 
               INSERT INTO hse_users VALUES (%(user_id)s, %(lastname)s, %(firstname)s, %(username)s)''',
               {'user_id': user_id, 'lastname': lastname, 'firstname': firstname, 'username': username})
+
+def show_userscore(user_id):
+    # DB_JSON(''' SELECT * FROM ''', {'user_id':user_id})
+    return
 
 def check_answer(quiz_id,quiz_type,user_id,answer):
     check_answer_type = {
@@ -24,11 +27,11 @@ def check_answer(quiz_id,quiz_type,user_id,answer):
     return 
 
 
-def show_userscore(user_id):
-    return
+
 
 # СОЗДАНИЕ ИВЕНТА
 def add_quiz(quiz_type, quiz_data):
+    
     create_quiz_type = {
     'quiz_qr':add_quiz_qr,
     'quiz_choose': add_quiz_choose,
@@ -36,9 +39,10 @@ def add_quiz(quiz_type, quiz_data):
     }
     
     create_quiz_type[quiz_type](quiz_data=quiz_data)
-    
+
     return
 
+    
 
 
 def add_quiz_choose(quiz_data):
@@ -85,16 +89,22 @@ def add_quiz_qr(quiz_data):
 
 def add_quiz_text(quiz_data):
     quiz_id = create_id()
+    print(quiz_data['question'])
+    print(quiz_data['right_answer_reply'])    
     DB_COMMIT(""" 
-              INSERT INTO hse_quiz (quiz_id,quiz_type, question, right_answer_reply, wrong_answer_reply) 
-              VALUES (%(quiz_id)s, %(quiz_type)s, %(question)s, %(right_answer_reply)s, %(wrong_answer_reply)s);
+              INSERT INTO hse_quiz (quiz_id,quiz_type, question, right_answer_reply, wrong_answer_reply, prize) 
+              VALUES (%(quiz_id)s, %(quiz_type)s, %(question)s, %(right_answer_reply)s, %(wrong_answer_reply)s, %(prize)s);
               """, {'quiz_id':quiz_id,
                     'quiz_type': 'quiz_text',
                     'question':quiz_data['question'],
                     'right_answer_reply': quiz_data['right_answer_reply'],
-                    'wrong_answer_reply': quiz_data['wrong_answer_reply']})
+                    'wrong_answer_reply': quiz_data['wrong_answer_reply'],
+                    'prize': quiz_data['prize']})
     
-    text_insert_values = [(quiz_id, correct_text)  for correct_text in quiz_data['correct_text'] ]
+    # в specifics указаны все правильные ответы
+    # они находятся в поле correct_text, разделены запятой
+    quiz_data['specifics'] = json.loads(quiz_data['specifics'])
+    text_insert_values = [(quiz_id, correct_text)  for correct_text in quiz_data['specifics']['correct_text'].split(',') ]
     
 
     
