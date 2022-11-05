@@ -47,16 +47,33 @@ def add_quiz(quiz_type, quiz_data):
 
 def add_quiz_choose(quiz_data):
     quiz_id = create_id()
+    
     DB_COMMIT(""" 
-              INSERT INTO hse_quiz (quiz_id,quiz_type, question, right_answer_reply, wrong_answer_reply) 
-              VALUES (%(quiz_id)s, %(quiz_type)s, %(question)s, %(right_answer_reply)s, %(wrong_answer_reply)s);
+              INSERT INTO hse_quiz (quiz_id,quiz_type, question, right_answer_reply, wrong_answer_reply, prize) 
+              VALUES (%(quiz_id)s, %(quiz_type)s, %(question)s, %(right_answer_reply)s, %(wrong_answer_reply)s, %(prize)s);
               """, {'quiz_id':quiz_id,
                     'quiz_type': 'quiz_choose',
                     'question':quiz_data['question'],
                     'right_answer_reply': quiz_data['right_answer_reply'],
-                    'wrong_answer_reply': quiz_data['wrong_answer_reply']})
+                    'wrong_answer_reply': quiz_data['wrong_answer_reply'],
+                    'prize': quiz_data['prize']})
+    	
+
+
+    # specifics выглядит следующим образом: 
+    #   {'option_text': ['прав', 'неправ', 'неправ2'], 'option_correct': [1, 0, 0]}
+    choose_insert_values = []
+    quiz_data['specifics'] = json.loads(quiz_data['specifics'])
+    quiz_data['specifics']['option_text'] = list(quiz_data['specifics']['option_text'])
+    quiz_data['specifics']['option_correct'] = list(quiz_data['specifics']['option_correct'])
+    for option in range(len(quiz_data['specifics'])+1):
+        option_text = str(quiz_data['specifics']['option_text'][option])
+        option_correct =bool (quiz_data['specifics']['option_correct'][option])
+        choose_insert_values.append((quiz_id, option_text, option_correct))
+        
+
     
-    choose_insert_values = [(quiz_id, quiz_data['option_text'][i], quiz_data['option_correct'][i])  for i in range(len(quiz_data['option_text'])) ]
+
 
     DB_COMMIT_MULTIPLE("""
               INSERT INTO quiz_choose (quiz_id, option_text, option_correct)  VALUES
@@ -229,7 +246,7 @@ def show_quiz_choose(quiz_id):
     
     return quiz_data_choose
 
-def show_all():
+def show_all_quizes():
      
     quizes = DB_JSON(""" 
 SELECT hse_quiz.quiz_id, 
@@ -277,5 +294,4 @@ def show_all_users():
     users = DB_JSON(""" 
                     SELECT * FROM hse_users;
                     """, {})
-    print(users)
     return users

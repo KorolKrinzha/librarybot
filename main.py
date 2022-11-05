@@ -6,7 +6,7 @@ import env
 import json
 from DB_calls import add_user, show_quiz, check_answer, show_userscore
 from DB_calls import add_quiz, delete_quiz
-from DB_calls import show_all_users
+from DB_calls import show_all_users, show_all_quizes
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -167,13 +167,17 @@ def api_admin_deletequiz():
         print(e)
         return Response(response='Ошибка при удалении квиза', status=500)
 
-# # !!! ПОКАЗ ВСЕХ квизОВ - АДМИН КИЕНТ
-# @app.route("/api/admin/showall", methods=['GET'])
-# def api_admin_showall():
-
-#     json_data = json.dumps(show_all(),  ensure_ascii=False)
-
-#     return jsonify(quizes=json_data)
+# Просмотр всех квизов
+@app.route("/api/admin/showquizes", methods=['GET'])
+def api_admin_showquizes():
+    try:
+        json_data = json.dumps(show_all_quizes(),  ensure_ascii=False)
+        json_data = json.loads(json_data)
+        return jsonify(json_data)
+    except Exception as e:
+        print(e)
+        return Response(response='Ошибка при получении квизов', status=500)
+        
 
 
 if __name__ == 'main':
