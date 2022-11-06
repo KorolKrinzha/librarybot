@@ -40,7 +40,8 @@ def api_adduser():
     lastname = request.args.get(key='lastname')
     firstname = request.args.get(key='firstname')
     username = request.args.get(key='username')
-
+    if not user_id or not lastname or not firstname or not username:
+        return Response(response='Не передан обязательный параметр', status=400)
     try:
         add_user(user_id, lastname, firstname, username)
         return Response(
@@ -58,6 +59,8 @@ def api_adduser():
 @app.route("/api/quiz", methods=['GET'])
 def api_quiz():
     quiz_id = request.args.get(key='quiz_id')
+    if not quiz_id:
+        return Response(response='Не передан обязательный параметр', status=400)
     try:
         return Response(
         response=show_quiz(quiz_id),
@@ -80,6 +83,8 @@ def api_answer():
     user_id = request.args.get(key='user_id')
     answer = request.args.get(key='answer')
     quiz_type = request.args.get(key='quiz_type')
+    if not quiz_type or not quiz_id or not user_id or not answer:
+        return Response(response='Не передан обязательный параметр', status=400)
     try:
         correct, reply = check_answer(quiz_id, quiz_type, user_id, answer)
         if correct:
@@ -96,7 +101,7 @@ def api_answer():
 def api_userscore():
     user_id = request.args.get(key='user_id') or None
     if user_id is None:
-        return Response(response='Не указан user_id', status=400)
+        return Response(response='Не передан обязательный параметр', status=400)
     try:
         userscore = show_userscore(user_id)
         if userscore is None:
@@ -130,9 +135,10 @@ def api_admin_createquiz():
         'prize': prize,
         'specifics': specifics}
 
-    if len(question)==0 or len(right_answer_reply)==0 or len(wrong_answer_reply)==0:
-        return Response(response='Ошибка. Не указаны необходимые данные', status=500)
 
+    if not quiz_type or not question or not right_answer_reply or not wrong_answer_reply or not prize or not specifics:
+        return Response(response='Не передан обязательный параметр', status=400)
+    
     try:
         add_quiz(quiz_type, data_json)
         return Response(response='Квиз успешно добавлен', status=200)
@@ -147,6 +153,8 @@ def api_admin_createquiz():
 @admin_role
 def api_admin_deletequiz():
     quiz_id = request.args.get(key='quiz_id')
+    if not quiz_id:
+        return Response(response='Не передан обязательный параметр', status=400)
     try:
         delete_quiz(quiz_id)
         return Response(response='Квиз успешно удален', status=200)
@@ -169,7 +177,7 @@ def api_admin_showquizes():
 # Вывод всех пользователей
 @app.route("/api/admin/showusers", methods=['GET'])
 @admin_role
-def api_showusers():
+def api_admin_showusers():
     try:
         all_users = show_all_users()
         all_users = json.dumps(all_users)
@@ -184,8 +192,11 @@ def api_showusers():
 # Вывод QR-кода
 @app.route("/api/admin/showqr", methods=['GET'])
 @admin_role
-def api_showqr():
+def api_admin_showqr():
     qr_id = request.args.get(key='qr_id')
+    if not qr_id:
+        return Response(response='Не передан обязательный параметр', status=400)
+    
     try:
         
         return send_from_directory('./api_public/QR/', f'{qr_id}.png')
