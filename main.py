@@ -194,4 +194,4 @@ def api_showqr():
         return Response(response='Ошибка при получении QR-кода', status=500)
 
 if __name__ == 'main':
-    app.run(debug=True, host='0.0.0.0', port=6000)
+    app.run(host='0.0.0.0')
