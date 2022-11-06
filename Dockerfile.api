@@ -1,9 +1,10 @@
 FROM python:3.8.10-alpine
 WORKDIR /app
 
-COPY ./requirements.txt ./main.py  ./.flaskenv ./env.py ./
+COPY ./requirements.txt ./main.py  ./.flaskenv ./env.py ./DB_calls ./DB_tools ./
 COPY ./api_public ./api_public
 RUN pip install -r ./requirements.txt
+RUN apt-get update && apt-get install 
 ENV FLASK_ENV production
 
 EXPOSE 6000
