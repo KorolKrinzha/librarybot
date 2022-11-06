@@ -1,9 +1,0 @@
-services:
-    api:
-      build:
-        context: .
-        dockerfile: Dockerfile.api
-      image: library/api
-      container_name: api
-      restart: unless-stopped
-      
